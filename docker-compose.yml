@@ -1,0 +1,18 @@
+services:
+
+  nestjs-realworld-example-app:
+    build: .
+    ports:
+    - 3000:3000
+    depends_on:
+      - db
+    env_file:
+      - config.env
+
+  db:
+    image: postgres
+    restart: always
+    ports: 
+    - 5432:5432
+    environment:
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
