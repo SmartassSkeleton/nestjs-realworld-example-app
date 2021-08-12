@@ -48,7 +48,7 @@ export class ArticleService {
       where: { AND: andQueries },
       orderBy: { createdAt: 'desc' },
       include: articleInclude,
-      ...('limit' in query ? {first: +query.limit} : {}) as any,
+      ...('limit' in query ? {take: +query.limit} : {}) as any,
       ...('offset' in query ? {skip: +query.offset} : {}) as any,
     });
     const articlesCount = await this.prisma.article.count({
