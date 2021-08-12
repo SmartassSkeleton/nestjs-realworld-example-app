@@ -29,6 +29,8 @@ build: ## Build the release and develoment container. The development
 	docker-compose build --no-cache $(APP_NAME)
 	docker build -t $(APP_NAME) .
 
+build-prod: ## Build the production
+	docker build -t $(APP_NAME) -f Dockerfile.prod .
 
 run: stop ## Run container on port configured in `config.env`
 	docker run -i -t --rm --env-file=./config.env -p=$(PORT):$(PORT) --name="$(APP_NAME)" $(APP_NAME)
@@ -48,7 +50,7 @@ clean: ## Clean the generated/compiles files
 	echo "nothing clean ..."
 
 # Docker release - build, tag and push the container
-release: build publish ## Make a release by building and publishing the `{version}` ans `latest` tagged containers to ECR
+release: build-prod publish ## Make a release by building and publishing the `{version}` ans `latest` tagged containers to ECR
 
 # Docker publish
 publish: repo-login publish-latest publish-version ## publish the `{version}` ans `latest` tagged containers to ECR
@@ -80,14 +82,14 @@ tag-version: ## Generate container `{version}` tag
 # HELPERS
 
 # generate script to login to aws docker repo
-CMD_REPOLOGIN := "aws ecr"
+CMD_REPOLOGIN := "aws ecr get-login-password"
 ifdef AWS_CLI_PROFILE
 CMD_REPOLOGIN += "--profile $(AWS_CLI_PROFILE)"
 endif
 ifdef AWS_CLI_REGION
 CMD_REPOLOGIN += "--region $(AWS_CLI_REGION)"
 endif
-CMD_REPOLOGIN += "get-login --no-include-email"
+CMD_REPOLOGIN += " | docker login --username AWS --password-stdin $(DOCKER_REPO)"
 
 repo-login: ## Auto login to AWS-ECR unsing aws-cli
 	@eval $(CMD_REPOLOGIN)
