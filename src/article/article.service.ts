@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateArticleDto } from './dto';
 import { PrismaService } from '../shared/services/prisma.service';
 const slug = require('slug');
-import { ArticleWhereInput, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 const articleAuthorSelect = {
   email: true,
@@ -48,8 +48,8 @@ export class ArticleService {
       where: { AND: andQueries },
       orderBy: { createdAt: 'desc' },
       include: articleInclude,
-      ...('limit' in query ? {first: +query.limit} : {}),
-      ...('offset' in query ? {skip: +query.offset} : {}),
+      ...('limit' in query ? {first: +query.limit} : {}) as any,
+      ...('offset' in query ? {skip: +query.offset} : {}) as any,
     });
     const articlesCount = await this.prisma.article.count({
       where: { AND: andQueries },
@@ -62,7 +62,7 @@ export class ArticleService {
   }
 
 
-  private buildFindAllQuery(query): Prisma.Enumerable<ArticleWhereInput> {
+  private buildFindAllQuery(query): Prisma.Enumerable<Prisma.ArticleWhereInput> {
     const queries = [];
 
     if ('tag' in query) {
@@ -108,8 +108,8 @@ export class ArticleService {
       where,
       orderBy: { createdAt: 'desc' },
       include: articleInclude,
-      ...('limit' in query ? {first: +query.limit} : {}),
-      ...('offset' in query ? {skip: +query.offset} : {}),
+      ...('limit' in query ? {first: +query.limit} : {}) as any,
+      ...('offset' in query ? {skip: +query.offset} : {}) as any,
     });
     const articlesCount = await this.prisma.article.count({
       where,
@@ -122,7 +122,7 @@ export class ArticleService {
   }
 
   async findOne(userId: number, slug: string): Promise<any> {
-    let article: any = await this.prisma.article.findOne({
+    let article: any = await this.prisma.article.findUnique({
       where: { slug },
       include: articleInclude,
     });

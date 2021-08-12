@@ -12,18 +12,19 @@ var __param = (this && this.__param) || function (paramIndex, decorator) {
     return function (target, key) { decorator(target, key, paramIndex); }
 };
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserController = void 0;
 const common_1 = require("@nestjs/common");
 const user_service_1 = require("./user.service");
 const dto_1 = require("./dto");
-const http_exception_1 = require("@nestjs/common/exceptions/http.exception");
 const user_decorator_1 = require("./user.decorator");
 const validation_pipe_1 = require("../shared/pipes/validation.pipe");
 const swagger_1 = require("@nestjs/swagger");
@@ -48,19 +49,13 @@ let UserController = class UserController {
     }
     delete(params) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(params);
             return yield this.userService.delete(params.slug);
         });
     }
     login(loginUserDto) {
         return __awaiter(this, void 0, void 0, function* () {
-            const _user = yield this.userService.findOne(loginUserDto);
-            const errors = { User: ' not found' };
-            if (!_user)
-                throw new http_exception_1.HttpException({ errors }, 401);
-            const token = yield this.userService.generateJWT(_user);
-            const { email, username, bio, image } = _user;
-            const user = { email, token, username, bio, image };
-            return { user };
+            return yield this.userService.login(loginUserDto);
         });
     }
 };
@@ -73,7 +68,8 @@ __decorate([
 ], UserController.prototype, "findMe", null);
 __decorate([
     common_1.Put('user'),
-    __param(0, user_decorator_1.User('id')), __param(1, common_1.Body('user')),
+    __param(0, user_decorator_1.User('id')),
+    __param(1, common_1.Body('user')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number, dto_1.UpdateUserDto]),
     __metadata("design:returntype", Promise)
@@ -87,7 +83,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], UserController.prototype, "create", null);
 __decorate([
-    common_1.Delete('users/:slug'),
+    common_1.Delete('user/:slug'),
     __param(0, common_1.Param()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
@@ -103,7 +99,7 @@ __decorate([
 ], UserController.prototype, "login", null);
 UserController = __decorate([
     swagger_1.ApiBearerAuth(),
-    swagger_1.ApiUseTags('user'),
+    swagger_1.ApiTags('users'),
     common_1.Controller(),
     __metadata("design:paramtypes", [user_service_1.UserService])
 ], UserController);

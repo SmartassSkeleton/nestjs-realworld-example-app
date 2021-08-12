@@ -8,105 +8,112 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
-var __param = (this && this.__param) || function (paramIndex, decorator) {
-    return function (target, key) { decorator(target, key, paramIndex); }
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
         function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
         function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UserService = void 0;
 const common_1 = require("@nestjs/common");
-const typeorm_1 = require("@nestjs/typeorm");
-const typeorm_2 = require("typeorm");
-const user_entity_1 = require("./user.entity");
 const jwt = require('jsonwebtoken');
 const config_1 = require("../config");
-const class_validator_1 = require("class-validator");
 const http_exception_1 = require("@nestjs/common/exceptions/http.exception");
 const common_2 = require("@nestjs/common");
 const argon2 = require("argon2");
+const prisma_service_1 = require("../shared/services/prisma.service");
+const select = {
+    email: true,
+    username: true,
+    bio: true,
+    image: true
+};
 let UserService = class UserService {
-    constructor(userRepository) {
-        this.userRepository = userRepository;
+    constructor(prisma) {
+        this.prisma = prisma;
     }
     findAll() {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.userRepository.find();
+            return yield this.prisma.user.findMany({ select });
         });
     }
-    findOne({ email, password }) {
+    login(payload) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.userRepository.findOne({ email });
-            if (!user) {
-                return null;
+            const _user = yield this.prisma.user.findUnique({
+                where: { email: payload.email }
+            });
+            const errors = { User: 'email or password wrong' };
+            if (!_user) {
+                throw new http_exception_1.HttpException({ errors }, 401);
             }
-            if (yield argon2.verify(user.password, password)) {
-                return user;
+            const authenticated = yield argon2.verify(_user.password, payload.password);
+            if (!authenticated) {
+                throw new http_exception_1.HttpException({ errors }, 401);
             }
-            return null;
+            const token = yield this.generateJWT(_user);
+            const { password } = _user, user = __rest(_user, ["password"]);
+            return {
+                user: Object.assign({ token }, user)
+            };
         });
     }
     create(dto) {
         return __awaiter(this, void 0, void 0, function* () {
             const { username, email, password } = dto;
-            const qb = yield typeorm_2.getRepository(user_entity_1.UserEntity)
-                .createQueryBuilder('user')
-                .where('user.username = :username', { username })
-                .orWhere('user.email = :email', { email });
-            const user = yield qb.getOne();
-            if (user) {
+            const userNotUnique = yield this.prisma.user.findUnique({
+                where: { email }
+            });
+            if (userNotUnique) {
                 const errors = { username: 'Username and email must be unique.' };
                 throw new http_exception_1.HttpException({ message: 'Input data validation failed', errors }, common_2.HttpStatus.BAD_REQUEST);
             }
-            let newUser = new user_entity_1.UserEntity();
-            newUser.username = username;
-            newUser.email = email;
-            newUser.password = password;
-            newUser.articles = [];
-            const errors = yield class_validator_1.validate(newUser);
-            if (errors.length > 0) {
-                const _errors = { username: 'Userinput is not valid.' };
-                throw new http_exception_1.HttpException({ message: 'Input data validation failed', _errors }, common_2.HttpStatus.BAD_REQUEST);
-            }
-            else {
-                const savedUser = yield this.userRepository.save(newUser);
-                return this.buildUserRO(savedUser);
-            }
+            const hashedPassword = yield argon2.hash(password);
+            const data = {
+                username,
+                email,
+                password: hashedPassword,
+            };
+            const user = yield this.prisma.user.create({ data, select });
+            return { user };
         });
     }
-    update(id, dto) {
+    update(id, data) {
         return __awaiter(this, void 0, void 0, function* () {
-            let toUpdate = yield this.userRepository.findOne(id);
-            delete toUpdate.password;
-            delete toUpdate.favorites;
-            let updated = Object.assign(toUpdate, dto);
-            return yield this.userRepository.save(updated);
+            const where = { id };
+            const user = yield this.prisma.user.update({ where, data, select });
+            return { user };
         });
     }
     delete(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            return yield this.userRepository.delete({ email: email });
+            return yield this.prisma.user.delete({ where: { email }, select });
         });
     }
     findById(id) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.userRepository.findOne(id);
-            if (!user) {
-                const errors = { User: ' not found' };
-                throw new http_exception_1.HttpException({ errors }, 401);
-            }
-            return this.buildUserRO(user);
+            const user = yield this.prisma.user.findUnique({ where: { id }, select: Object.assign({ id: true }, select) });
+            return { user };
         });
     }
     findByEmail(email) {
         return __awaiter(this, void 0, void 0, function* () {
-            const user = yield this.userRepository.findOne({ email: email });
-            return this.buildUserRO(user);
+            const user = yield this.prisma.user.findUnique({ where: { email }, select });
+            return { user };
         });
     }
     generateJWT(user) {
@@ -121,22 +128,10 @@ let UserService = class UserService {
         }, config_1.SECRET);
     }
     ;
-    buildUserRO(user) {
-        const userRO = {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            bio: user.bio,
-            token: this.generateJWT(user),
-            image: user.image
-        };
-        return { user: userRO };
-    }
 };
 UserService = __decorate([
     common_1.Injectable(),
-    __param(0, typeorm_1.InjectRepository(user_entity_1.UserEntity)),
-    __metadata("design:paramtypes", [typeorm_2.Repository])
+    __metadata("design:paramtypes", [prisma_service_1.PrismaService])
 ], UserService);
 exports.UserService = UserService;
 //# sourceMappingURL=user.service.js.map
