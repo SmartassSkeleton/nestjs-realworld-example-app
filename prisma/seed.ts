@@ -15,12 +15,6 @@ const userData = [
           description: "Lorem ipsum dolor sit amet",
           body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel mi finibus, posuere elit eget, vehicula metus. Vestibulum a eleifend massa, nec faucibus lacus. Proin sit amet erat et dolor pulvinar mollis. Mauris dictum ipsum nec mi pretium rutrum. Nunc rutrum nisl elit, auctor aliquet enim sagittis feugiat. Nulla sed leo ut tortor vehicula luctus non quis nunc. In sed mi vulputate, aliquet lorem id, eleifend sem. Aenean euismod nunc at ligula finibus, ut aliquam quam tristique. Donec vestibulum tempus odio ut fermentum.",
           tagList: "moonpay,moon,cryptocurrency,bitcoin",
-          // comments: {
-          //   create: [
-          //     {body:"Lorem ipsum dolor sit amet"},
-          //     {body:"Lorem ipsum dolor sit amet"}
-          //   ],
-          // },  
         },
       ],
     },
@@ -38,7 +32,6 @@ const userData = [
           description: "Lorem ipsum dolor sit amet",
           body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel mi finibus, posuere elit eget, vehicula metus. Vestibulum a eleifend massa, nec faucibus lacus. Proin sit amet erat et dolor pulvinar mollis. Mauris dictum ipsum nec mi pretium rutrum. Nunc rutrum nisl elit, auctor aliquet enim sagittis feugiat. Nulla sed leo ut tortor vehicula luctus non quis nunc. In sed mi vulputate, aliquet lorem id, eleifend sem. Aenean euismod nunc at ligula finibus, ut aliquam quam tristique. Donec vestibulum tempus odio ut fermentum.",
           tagList: "moonpay,moon,cryptocurrency,bitcoin",
-          // comments: {create: [{body:"Lorem ipsum dolor sit amet"},{body:"Lorem ipsum dolor sit amet"}],},  
         }
       ],
     },
@@ -56,7 +49,6 @@ const userData = [
           description: "Lorem ipsum dolor sit amet",
           body: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla vel mi finibus, posuere elit eget, vehicula metus. Vestibulum a eleifend massa, nec faucibus lacus. Proin sit amet erat et dolor pulvinar mollis. Mauris dictum ipsum nec mi pretium rutrum. Nunc rutrum nisl elit, auctor aliquet enim sagittis feugiat. Nulla sed leo ut tortor vehicula luctus non quis nunc. In sed mi vulputate, aliquet lorem id, eleifend sem. Aenean euismod nunc at ligula finibus, ut aliquam quam tristique. Donec vestibulum tempus odio ut fermentum.",
           tagList: "moonpay,moon,cryptocurrency,bitcoin",
-          // comments: {create: [{body:"Lorem ipsum dolor sit amet"},{body:"Lorem ipsum dolor sit amet"}],},  
         }
       ],
     },
