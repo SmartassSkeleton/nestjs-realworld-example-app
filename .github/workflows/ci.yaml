@@ -30,13 +30,13 @@ jobs:
         push: true
         tags: 839991594784.dkr.ecr.eu-west-1.amazonaws.com/nestjs-realworld-example-app:latest
 
-     - name: 'Deploy'
-       uses: 'deliverybot/helm@master'
-       with:
-         token: '${{ github.token }}'
-         chart: "nestjs-realworld-example-app"
-         namespace: default
-         release: "nestjs-realworld-example-app"
-         value-files: './chart/values.yaml'
-       env:
-         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+    - name: 'Deploy'
+      uses: 'deliverybot/helm@master'
+      with:
+        token: '${{ github.token }}'
+        chart: "nestjs-realworld-example-app"
+        namespace: default
+        release: "nestjs-realworld-example-app"
+        value-files: './chart/values.yaml'
+      env:
+        KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
