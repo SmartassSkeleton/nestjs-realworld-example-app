@@ -72,6 +72,9 @@ tag-version: ## Generate container `{version}` tag
 	@echo 'create tag $(VERSION)'
 	docker tag $(APP_NAME) $(DOCKER_REPO)/$(APP_NAME):$(VERSION)
 
+# Benchmarking task
+	articles: #runs a benchmark for 30 seconds, using 12 threads, and keeping 400 HTTP connections open.
+		wrk -t12 -c400 -d30s http://localhost:3000/api/articles
 
 
 # HELPERS
