@@ -26,7 +26,7 @@ export class UserService {
   }
 
   async login(payload: LoginUserDto): Promise<any> {
-    const _user = await this.prisma.user.findOne({
+    const _user = await this.prisma.user.findUnique({
       where: {email: payload.email}
     });
 
@@ -53,7 +53,7 @@ export class UserService {
     const {username, email, password} = dto;
 
     // check uniqueness of username/email
-    const userNotUnique = await this.prisma.user.findOne({
+    const userNotUnique = await this.prisma.user.findUnique({
       where: {email}
     });
 
@@ -86,12 +86,12 @@ export class UserService {
   }
 
   async findById(id: number): Promise<any>{
-    const user = await this.prisma.user.findOne({ where: { id }, select: {id: true, ...select} });
+    const user = await this.prisma.user.findUnique({ where: { id }, select: {id: true, ...select} });
     return { user };
   }
 
   async findByEmail(email: string): Promise<any>{
-    const user = await this.prisma.user.findOne({ where: { email }, select });
+    const user = await this.prisma.user.findUnique({ where: { email }, select });
     return { user };
   }
 

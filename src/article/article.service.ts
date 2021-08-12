@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CreateArticleDto } from './dto';
 import { PrismaService } from '../shared/services/prisma.service';
 const slug = require('slug');
-import { ArticleWhereInput, Enumerable } from '@prisma/client';
+import { ArticleWhereInput, Prisma } from '@prisma/client';
 
 const articleAuthorSelect = {
   email: true,
@@ -62,7 +62,7 @@ export class ArticleService {
   }
 
 
-  private buildFindAllQuery(query): Enumerable<ArticleWhereInput> {
+  private buildFindAllQuery(query): Prisma.Enumerable<ArticleWhereInput> {
     const queries = [];
 
     if ('tag' in query) {

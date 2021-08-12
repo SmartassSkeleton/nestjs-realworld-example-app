@@ -10,13 +10,13 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   async onModuleInit() {
     try {
 
-      await this.connect();
+      await this.$connect();
     } catch (e) {
       console.log(e)
     }
   }
 
   async onModuleDestroy() {
-    await this.disconnect();
+    await this.$disconnect();
   }
 }

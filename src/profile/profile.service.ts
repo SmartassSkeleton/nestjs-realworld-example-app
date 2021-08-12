@@ -15,7 +15,7 @@ export class ProfileService {
   constructor(private prisma: PrismaService) {}
 
   async findProfile(userId: number, followingUsername: string): Promise<any> {
-    const followed = await this.prisma.user.findOne({
+    const followed = await this.prisma.user.findUnique({
       where: { username: followingUsername },
       select: profileSelect
     });
@@ -53,7 +53,7 @@ export class ProfileService {
       throw new HttpException('Follower username not provided.', HttpStatus.BAD_REQUEST);
     }
 
-    const followed = await this.prisma.user.findOne({
+    const followed = await this.prisma.user.findUnique({
       where: { username },
       select: profileSelect,
     });
@@ -87,7 +87,7 @@ export class ProfileService {
       throw new HttpException('Follower username not provided.', HttpStatus.BAD_REQUEST);
     }
 
-    const followed = await this.prisma.user.findOne({
+    const followed = await this.prisma.user.findUnique({
       where: { username },
       select: profileSelect,
     });
