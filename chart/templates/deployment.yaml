@@ -58,7 +58,7 @@ spec:
             - name: POSTGRES_HOST
               value: {{ .Values.postgres.host }}
             - name: POSTGRES_PORT
-              value: {{ .Values.postgres.port }}
+              value: {{ .Values.postgres.port | quote }}
             - name: POSTGRES_DATABASE
               value: {{ .Values.postgres.database }}
             - name: POSTGRES_PASSWORD
