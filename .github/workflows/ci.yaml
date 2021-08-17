@@ -24,7 +24,7 @@ jobs:
       uses: aws-actions/amazon-ecr-login@v1
 
     - name: Set short sha
-      run: echo "SHORT_SHA=${GITHUB_SHA} | cut -c1-8" >> $GITHUB_ENV
+      run: echo "SHORT_SHA=${GITHUB_SHA::8}" >> $GITHUB_ENV
 
     - name: Build and push
       id: docker_build
