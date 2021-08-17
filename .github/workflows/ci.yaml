@@ -33,14 +33,17 @@ jobs:
     needs: docker
     runs-on: ubuntu-latest
     steps:
-     - name: helm
-       uses: deliverybot/helm@master
-       with:
-         token: ${{ github.token }}
-         chart: ./chart
-         namespace: default
-         release: "nestjs-realworld-example-app"
-         value-files: ./chart/values.yaml
-         helm: helm3
-       env:
-         KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: helm
+        uses: deliverybot/helm@master
+        with:
+          token: ${{ github.token }}
+          chart: ./chart
+          namespace: default
+          release: "nestjs-realworld-example-app"
+          value-files: ./chart/values.yaml
+          helm: helm3
+        env:
+          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
