@@ -46,4 +46,4 @@ jobs:
           value-files: ./chart/values.yaml
           helm: helm3
         env:
-          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
+          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG_FILE }}'
