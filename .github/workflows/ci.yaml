@@ -43,16 +43,9 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: eu-west-1
 
-      - name: helm
-        uses: deliverybot/helm@master
-        with:
-          token: ${{ github.token }}
-          chart: ./chart
-          namespace: default
-          release: "nestjs-realworld-example-app"
-          value-files: ./chart/values.yaml
-          helm: helm3
+      - name: helm deploy
+        uses: koslib/helm-eks-action@master
         env:
-          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG_FILE }}'
-          # AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          # AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          KUBE_CONFIG_DATA: ${{ secrets.KUBECONFIG_FILE }}
+        with:
+          command: helm upgrade nestjs-realworld-example-app --install --wait ./chart
