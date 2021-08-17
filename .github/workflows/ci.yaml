@@ -30,16 +30,17 @@ jobs:
         push: true
         tags: 839991594784.dkr.ecr.eu-west-1.amazonaws.com/nestjs-realworld-example-app:latest
   deploy:
+    needs: docker
     runs-on: ubuntu-latest
     steps:
      - name: helm
        uses: deliverybot/helm@master
        with:
          token: ${{ github.token }}
-         chart: /chart
+         chart: ./chart
          namespace: default
          release: "nestjs-realworld-example-app"
-         value-files: '/chart/values.yaml'
+         value-files: ./chart/values.yaml
          helm: helm3
        env:
          KUBECONFIG_FILE: '${{ secrets.KUBECONFIG }}'
