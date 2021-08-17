@@ -30,6 +30,7 @@ jobs:
       id: docker_build
       uses: docker/build-push-action@v2
       with:
+        file: ./Dockerfile.prod
         push: true
         tags: 839991594784.dkr.ecr.eu-west-1.amazonaws.com/nestjs-realworld-example-app:${{ env.SHORT_SHA }}
         build-args: |
