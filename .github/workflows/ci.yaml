@@ -23,12 +23,17 @@ jobs:
       id: login-ecr
       uses: aws-actions/amazon-ecr-login@v1
 
+    - name: Set short sha
+      run: echo "SHORT_SHA=${GITHUB_SHA} | cut -c1-8" >> $GITHUB_ENV
+
     - name: Build and push
       id: docker_build
       uses: docker/build-push-action@v2
       with:
         push: true
-        tags: 839991594784.dkr.ecr.eu-west-1.amazonaws.com/nestjs-realworld-example-app:$(echo ${GITHUB_SHA} | cut -c1-8)
+        tags: 839991594784.dkr.ecr.eu-west-1.amazonaws.com/nestjs-realworld-example-app:${{ env.SHORT_SHA }}
+      build-args: |
+          SHORT_SHA=${{ env.SHORT_SHA }}
   deploy:
     needs: docker
     runs-on: ubuntu-latest
