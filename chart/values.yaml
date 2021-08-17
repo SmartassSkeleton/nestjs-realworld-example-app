@@ -80,3 +80,9 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+
+postgres:
+  username: postgres
+  host: postgres-postgresql
+  port: "5432"
+  database: postgres

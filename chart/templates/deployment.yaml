@@ -53,6 +53,21 @@ spec:
                 secretKeyRef:
                   name: jwt-token
                   key: nest_secret
+            - name: POSTGRES_USERNAME
+              value: {{ .Values.postgres.username }}
+            - name: POSTGRES_HOST
+              value: {{ .Values.postgres.host }}
+            - name: POSTGRES_PORT
+              value: {{ .Values.postgres.port }}
+            - name: POSTGRES_DATABASE
+              value: {{ .Values.postgres.database }}
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-postgresql
+                  key: postgresql-password
+            - name: DATABASE_URL
+              value: "postgresql://$(POSTGRES_USERNAME):$(POSTGRES_PASSWORD)@$(POSTGRES_HOST):$(POSTGRES_PORT)/${POSTGRES_DATABASE}"
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
