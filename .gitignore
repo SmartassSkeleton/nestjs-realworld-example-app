@@ -37,7 +37,7 @@ dist/*
 crash.log
 
 # Kubeconfig files
-terraform/kubeconfig_
+terraform/kubeconfig-**
 
 # Helm
 # Chart dependencies

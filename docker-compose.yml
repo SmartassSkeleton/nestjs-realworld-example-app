@@ -19,6 +19,6 @@ services:
     environment:
       POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
 
-volumes:
-  db-data:
-driver: local
+# volumes:
+#   db-data:
+# driver: local
