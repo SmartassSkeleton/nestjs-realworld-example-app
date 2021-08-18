@@ -13,7 +13,7 @@
 
 Clone the repository
 
-    git clone git@github.com:lujakob/nestjs-realworld-example-app.git
+    git clone git@github.com:smartassskeleton/nestjs-realworld-example-app.git
 
 Switch to the repo folder
 
@@ -22,51 +22,7 @@ Switch to the repo folder
 Install dependencies
     
     npm install
-
-Copy config file and set JsonWebToken secret key
-
-    cp src/config.ts.example src/config.ts
     
-----------
-
-## Database
-
-The codebase contains examples of two different database abstractions, namely [TypeORM](http://typeorm.io/) and [Prisma](https://www.prisma.io/). 
-    
-The branch `master` implements TypeORM with a mySQL database.
-
-The branch `prisma` implements Prisma with a mySQL database.
-
-----------
-
-##### TypeORM
-
-----------
-
-Create a new mysql database with the name `nestjsrealworld`\
-(or the name you specified in the ormconfig.json)
-
-Copy TypeORM config example file for database settings
-
-    cp ormconfig.json.example
-    
-Set mysql database settings in ormconfig.json
-
-    {
-      "type": "mysql",
-      "host": "localhost",
-      "port": 3306,
-      "username": "your-mysql-username",
-      "password": "your-mysql-password",
-      "database": "nestjsrealworld",
-      "entities": ["src/**/**.entity{.ts,.js}"],
-      "synchronize": true
-    }
-    
-Start local mysql server and create new database 'nestjsrealworld'
-
-On application start, tables for all entities will be created.
-
 ----------
 
 ##### Prisma
@@ -85,10 +41,9 @@ Set mysql database settings in prisma/.env
 
     DATABASE_URL="mysql://USER:PASSWORD@HOST:PORT/DATABASE"
 
-To create all tables in the new database make the database migration from the prisma schema defined in prisma/schema.prisma
+To create all tables in the new database and seed them, run the database migration from the prisma schema defined in prisma/schema.prisma
 
-    npx prisma migrate save --experimental
-    npx prisma migrate up --experimental
+    npx prisma migrate dev reset
 
 Now generate the prisma client from the migrated database with the following command
 
@@ -107,6 +62,31 @@ The database tables are now set up and the prisma client is generated. For more 
 - `npm run start:watch` - Start application in watch mode
 - `npm run test` - run Jest test runner 
 - `npm run start:prod` - Build application
+
+----------
+
+## Local development using Docker
+
+The project is ready for local development using Docker and Docker-Compose. To facilitate local development use the [Makefile](Makefile).
+
+For a list of commands
+
+    make help
+
+The Makefile requires 2 files to run, `config.env` and `deploy.env`. Make a copy of them based on the example files and fill in your information.
+
+    cp deploy.env.example deploy.env && cp config.env.example config.env
+
+The repository contains 2 Docker images. One for local developmen called [Dockerfile](Dockerfile) and the 2nd is for Production purposes called [Dockerfile.prod](Dockerfile.prod). The Docker-Compose file uses the local development Docker file.
+
+**note**
+The docker-compose file doesn't contain a volume. This means that ones you destroy your database container all the data in it will be lost. To add a volume uncomment the lines in the [docker-compose.yml](docker-compose.yml) file.
+
+---------- 
+
+## Terraform
+
+The project contains 
 
 ----------
 
