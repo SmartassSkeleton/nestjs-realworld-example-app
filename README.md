@@ -86,7 +86,27 @@ The docker-compose file doesn't contain a volume. This means that ones you destr
 
 ## Terraform
 
-The project contains 
+The project has a Terraform module configured to run on AWS. The module creates a VPC, ECR and a EKS cluster. The state is saved on a S3 bucket and managed there by Terraform.
+
+Every PR with changes against the terraform folder will generate a plan which will later have to be approved. Once the plan is verified a `terraform apply` comment will apply the purposed plan.
+
+----------
+
+## Deploying to production
+
+Every push to the `moonpay-task` brench will generate a Github actions which builds and pushes a Docker image to the ECR created by Terraform and will use the [helm chart](chart) to deploy to Kubernetes.
+
+**Modifying the chart's values**
+
+To modify the chart's values change any value in the [values.yaml](chart/values.yaml) file.
+
+----------
+
+## Why AWS?
+
+As it's not my go to choice if I have a free hand to choose any cloud provider I chose to go with AWS because it is the cheapest amoung the big providers and I also have a few free credits for it ;).
+
+I'd rather go with GCP for it's maturity and well maintained products that allows you to have the latest and greatest in every technology straight out of the box - less self-made solutions == less time spending on maintaining standardized solutions == more time for doing awesome software engineering.  
 
 ----------
 
